@@ -3,7 +3,7 @@ import scipy.sparse as sparse
 import pandas as pd
 
 
-# This method cast any array in an integer numpy array
+# This method casts any array in an integer numpy array
 def int_cast(array):
     return np.array(list(map(int, array)))
 
@@ -52,7 +52,7 @@ class data_manager:
     def get_icm(self):
         return self.__ICM
 
-    # This method import the data from the csv files contained in the csv data folder
+    # This method imports the data from the csv files contained in the csv data folder
     def __download_files_offline(self):
         for file in self.__file_names:
             file = "../../data/" + file
@@ -67,7 +67,7 @@ class data_manager:
         max_user_number = np.max([np.max(matrix[:, 0]) for matrix in ucm_matrices])
         self._user_list = [int(i) for i in range(0, int(max_user_number + 1))]
 
-    # It computes and build the URM, ICM AND UCM matrix (in sparse.csr_matrix format) and it give them as result
+    # It computes and builds the URM, ICM and UCM matrix (in sparse.csr_matrix format) and it gives them as result
     def __compute_matrices(self):
         files = [self.__urm_files, self.__ucm_files, self.__icm_files]
         matrices = [[self.__data_in_files[i] for i in index] for index in files]

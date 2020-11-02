@@ -26,10 +26,12 @@ class splitter:
         return URM_train, URM_test
 
     def random_hold_out_ratings_validation(self, percentage_of_training_data, percentage_of_validation_data, percentage_of_testing_data=None):
+        assert (percentage_of_validation_data > 0 and percentage_of_training_data > 0 and (
+                    percentage_of_testing_data is None or percentage_of_testing_data > 0))
         if percentage_of_testing_data is not None:
             assert (percentage_of_validation_data + percentage_of_training_data + percentage_of_testing_data == 1)
         else:
-            assert(percentage_of_training_data + percentage_of_validation_data < 1)
+            assert (percentage_of_training_data + percentage_of_validation_data < 1)
         tmp = percentage_of_training_data
         percentage_of_training_data = percentage_of_training_data + percentage_of_validation_data
         train_, test_ = self.random_hold_out_ratings_train_test(percentage_of_training_data)
