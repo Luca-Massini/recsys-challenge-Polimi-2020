@@ -10,7 +10,7 @@ def int_cast(array):
 
 # This method takes in input some matrices with the same number of columns but possibly a different number of rows. It
 # resize all the matrices in such a way that in the end they will have the same number of rows
-def equalize_row(matrices):
+def equalize_rows(matrices):
     row = np.max([matrix.shape[0] for matrix in matrices])
     for matrix in matrices:
         matrix.resize((row, matrix.shape[1]))
@@ -78,10 +78,10 @@ class data_manager:
                             matrix in icm_matrices]
         ucm_coo_matrices = [sparse.coo_matrix((matrix[:, 2], (int_cast(matrix[:, 0]), int_cast(matrix[:, 1])))) for
                             matrix in ucm_matrices]
-        equalize_row(urm_coo_matrices)
-        equalize_row(icm_coo_matrices)
-        equalize_row(ucm_coo_matrices)
-        URM = sparse.hstack(urm_coo_matrices)
-        ICM = sparse.hstack(icm_coo_matrices)
-        UCM = sparse.hstack(ucm_coo_matrices)
+        equalize_rows(urm_coo_matrices)
+        equalize_rows(icm_coo_matrices)
+        equalize_rows(ucm_coo_matrices)
+        URM = sparse.hstack(urm_coo_matrices, format='csr')
+        ICM = sparse.hstack(icm_coo_matrices, format='csr')
+        UCM = sparse.hstack(ucm_coo_matrices, format='csr')
         return URM, ICM, UCM
