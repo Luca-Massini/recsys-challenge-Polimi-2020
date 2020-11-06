@@ -63,7 +63,7 @@ class splitter:
 
     def deterministic_hold_out_ratings_train_test(self, percentage_of_training_data=0.8):
         assert (0 < percentage_of_training_data < 1)
-        users, items = self.__URM.nonzero()
+        users, items = self.__data_importer.get_non_zero_urm_coordinates()
         n_users, n_items = np.max(users) + 1, np.max(items) + 1
         couples = list(zip(users, items))
         couples = [list(elem) for elem in couples]
@@ -89,7 +89,7 @@ class splitter:
         percentage_of_training_data = percentage_of_training_data + percentage_of_validation_data
         urm_training, urm_testing = self.deterministic_hold_out_ratings_train_test(percentage_of_training_data)
         percentage_of_validation_data = percentage_of_validation_data / tmp
-        users, items = urm_training.nonzero()
+        users, items = self.__data_importer.get_non_zero_urm_coordinates()
         n_users, n_items = np.max(users) + 1, np.max(items) + 1
         couples = list(zip(users, items))
         couples = [list(elem) for elem in couples]

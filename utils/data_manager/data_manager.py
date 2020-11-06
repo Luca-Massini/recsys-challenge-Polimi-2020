@@ -4,11 +4,14 @@ import pandas as pd
 
 
 # This class builds all the matrices and imports also all the files from the data folder in the right way.
+# This class is a singleton and therefore the instance is only one and the files are read only once. In this way it is
+# avoided the reading of the files several times
 class data_manager:
     __instance = None
 
     class __data_manager_instance:
         def __init__(self):
+            self.__nonzero_urm_coordinates = None
             # The names of the files to be downloaded. Until now they're empty strings since the competition is not opened
             # yet. Both file_names array and names array will be static. The same holds for the indexes
             self.__file_names = ["data_ICM_asset.csv", "data_ICM_price.csv", "data_ICM_sub_class.csv",
@@ -72,7 +75,12 @@ class data_manager:
             URM = sparse.hstack(urm_coo_matrices, format='csr')
             ICM = sparse.hstack(icm_coo_matrices, format='csr')
             UCM = sparse.hstack(ucm_coo_matrices, format='csr')
+            tmp = URM.nonzero()
+            self.__nonzero_urm_coordinates = tmp[0], tmp[1]
             return URM, ICM, UCM
+
+        def get_non_zero_urm_coordinates(self):
+            return self.__nonzero_urm_coordinates
 
     def __new__(cls):
         if not data_manager.__instance:
@@ -87,3 +95,6 @@ class data_manager:
 
     def get_icm(self):
         return self.__instance.get_icm()
+
+    def get_non_zero_urm_coordinates(self):
+        return self.__instance.get_non_zero_urm_coordinates()
