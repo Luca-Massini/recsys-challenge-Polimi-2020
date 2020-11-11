@@ -61,7 +61,7 @@ class splitter:
         items_2 = [elem[1] for elem in couples2]
         return users_1, users_2, items_1, items_2
 
-    def deterministic_hold_out_ratings_train_test(self, percentage_of_training_data=0.8):
+    def get_train_test(self, percentage_of_training_data=0.8):
         assert (0 < percentage_of_training_data < 1)
         users, items = self.__data_importer.get_non_zero_urm_coordinates()
         n_users, n_items = np.max(users) + 1, np.max(items) + 1
@@ -81,13 +81,13 @@ class splitter:
         urm_testing = sparse.csr_matrix(urm_testing)
         return urm_training, urm_testing
 
-    def deterministic_hold_out_ratings_validation(self, percentage_of_training_data, percentage_of_validation_data,
-                                                  percentage_of_testing_data=None):
+    def get_train_evaluation_test(self, percentage_of_training_data, percentage_of_validation_data,
+                                  percentage_of_testing_data=None):
         self.__assert_train_test_val_percentage(percentage_of_training_data, percentage_of_validation_data,
                                                 percentage_of_testing_data)
         tmp = percentage_of_training_data
         percentage_of_training_data = percentage_of_training_data + percentage_of_validation_data
-        urm_training, urm_testing = self.deterministic_hold_out_ratings_train_test(percentage_of_training_data)
+        urm_training, urm_testing = self.get_train_test(percentage_of_training_data)
         percentage_of_validation_data = percentage_of_validation_data / tmp
         users, items = self.__data_importer.get_non_zero_urm_coordinates()
         n_users, n_items = np.max(users) + 1, np.max(items) + 1
@@ -100,10 +100,12 @@ class splitter:
             shuffle=True,
             random_state=1234
         )
-        users_training, users_validation, items_training, items_validation = self.__unzip_couples(couples_train, couples_validation)
+        users_training, users_validation, items_training, items_validation = self.__unzip_couples(couples_train,
+                                                                                                  couples_validation)
         urm_training = sparse.coo_matrix((data_train, (users_training, items_training)), shape=(n_users, n_items))
         urm_training = sparse.csr_matrix(urm_training)
-        urm_validation = sparse.coo_matrix((data_validation, (users_validation, items_validation)), shape=(n_users, n_items))
+        urm_validation = sparse.coo_matrix((data_validation, (users_validation, items_validation)),
+                                           shape=(n_users, n_items))
         urm_validation = sparse.csr_matrix(urm_validation)
         return urm_training, urm_validation, urm_testing
 

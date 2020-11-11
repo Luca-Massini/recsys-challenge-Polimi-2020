@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.sparse as sparse
 import pandas as pd
+import os
 
 
 # This class builds all the matrices and imports also all the files from the data folder in the right way.
@@ -39,8 +40,9 @@ class data_manager:
         # This method imports the data from the csv files contained in the csv data folder
         def __download_files_offline(self):
             for file in self.__file_names:
-                file = "../../data/" + file
-                self.__data_in_files.append(pd.read_csv(file).to_numpy())
+                dirname = os.path.dirname(__file__)
+                filename = os.path.join(dirname, "../../data/" + file)
+                self.__data_in_files.append(pd.read_csv(filename).to_numpy())
 
         # This method casts any array into integer numpy array
         @staticmethod
@@ -98,3 +100,7 @@ class data_manager:
 
     def get_non_zero_urm_coordinates(self):
         return self.__instance.get_non_zero_urm_coordinates()
+
+
+if __name__ == '__main__':
+    test = data_manager()

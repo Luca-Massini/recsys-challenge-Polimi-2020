@@ -23,37 +23,13 @@ class evaluator_component:
         else:
             self.__relevant_items = self.__compute_relevant_explicit_ratings(threshold=threshold)
 
-    def get_precision(self, at=10):
-        recommended_items_per_user = [self.__recommender_algorithm.recommend(userId=user, at=at) for user in
-                                      self.__users]
-        precision_ = [self.__compute_precision(recommended_items_per_user[user], self.__relevant_items[user]) for user
-                      in self.__users]
-        return np.mean(precision_)
-
-    def get_recall(self, at=10):
-        recommended_items_per_user = [self.__recommender_algorithm.recommend(userId=user, at=at) for user in
-                                      self.__users]
-        recall_ = [self.__compute_recall(recommended_items_per_user[user], np.array(self.__relevant_items[user])) for
-                   user in self.__users]
-        return np.mean(recall_)
-
-    def get_MAP(self, at=10):
-        recommended_items_per_user = [self.__recommender_algorithm.recommend(userId=user, at=at) for user in
-                                      self.__users]
-        MAP_ = [self.__compute_MAP(recommended_items_per_user[user], np.array(self.__relevant_items[user])) for user in
-                self.__users]
-        return np.mean(MAP_)
-
     def evaluate(self, at=10):
         recommended_items_per_user = [self.__recommender_algorithm.recommend(userId=user, at=at) for user in
                                       self.__users]
-        precision_ = [self.__compute_precision(recommended_items_per_user[user], self.__relevant_items[user]) for user
-                      in self.__users]
-        recall_ = [self.__compute_recall(recommended_items_per_user[user], np.array(self.__relevant_items[user])) for
-                   user in self.__users]
-        MAP_ = [self.__compute_MAP(recommended_items_per_user[user], np.array(self.__relevant_items[user])) for user in
-                self.__users]
-        return np.mean(precision_), np.mean(recall_), np.mean(MAP_)
+        precision = self.__compute_total_precision(recommended_items_per_user)
+        recall = self.__compute_total_recall(recommended_items_per_user)
+        MAP_ = self.__compute_total_MAP(recommended_items_per_user)
+        return precision, recall, MAP_
 
     # PRIVATE METHODS:
 
@@ -89,3 +65,18 @@ class evaluator_component:
                         row_data[index] > threshold]
             relevant_items.append(relevant)
         return relevant_items
+
+    def __compute_total_precision(self, recommended_items):
+        precision_ = [self.__compute_precision(recommended_items[user], self.__relevant_items[user]) for user
+                      in self.__users]
+        return np.mean(precision_)
+
+    def __compute_total_recall(self, recommended_items):
+        recall_ = [self.__compute_recall(recommended_items[user], np.array(self.__relevant_items[user])) for
+                   user in self.__users]
+        return np.mean(recall_)
+
+    def __compute_total_MAP(self, recommended_items):
+        MAP_ = [self.__compute_MAP(recommended_items[user], np.array(self.__relevant_items[user])) for user in
+                self.__users]
+        return np.mean(MAP_)
