@@ -1,8 +1,8 @@
 import numpy as np
-from Recommender import Recommender
+from Recommender import trained_Recommender
 
 
-class TopPopRecommender(Recommender):
+class TopPopRecommender(trained_Recommender):
 
     def __init__(self, threshold=0, is_implicit=True):
         assert((threshold == 0 and is_implicit) or (threshold != 0 and not is_implicit))

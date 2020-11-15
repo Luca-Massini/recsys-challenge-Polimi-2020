@@ -12,18 +12,16 @@ class data_manager:
 
     class __data_manager_instance:
         def __init__(self):
-            self.__nonzero_urm_coordinates = None
             # The names of the files to be downloaded. Until now they're empty strings since the competition is not opened
             # yet. Both file_names array and names array will be static. The same holds for the indexes
-            self.__file_names = ["data_ICM_asset.csv", "data_ICM_price.csv", "data_ICM_sub_class.csv",
-                                 "data_UCM_age.csv",
-                                 "data_UCM_region.csv", "data_train.csv"]
-            self.__icm_files = [0, 1, 2]
-            self.__ucm_files = [3, 4]
-            self.__urm_files = [5]
+            self.__file_names = ["data_ICM_title_abstract.csv", "data_train.csv"]
+            self.__icm_files = [0]
+            self.__ucm_files = []
+            self.__urm_files = [1]
             self.__data_in_files = []
             self.__download_files_offline()
             self.__URM, self.__ICM, self.__UCM = self.__compute_matrices()
+            self.__nonzero_urm_coordinates = self.__URM.nonzero()
 
         # This method returns the URM matrix in csr matrix form
         def get_urm(self):
@@ -68,18 +66,11 @@ class data_manager:
             icm_coo_matrices = [
                 sparse.coo_matrix((matrix[:, 2], (self.__int_cast(matrix[:, 0]), self.__int_cast(matrix[:, 1])))) for
                 matrix in icm_matrices]
-            ucm_coo_matrices = [
-                sparse.coo_matrix((matrix[:, 2], (self.__int_cast(matrix[:, 0]), self.__int_cast(matrix[:, 1])))) for
-                matrix in ucm_matrices]
             self.__equalize_rows(urm_coo_matrices)
             self.__equalize_rows(icm_coo_matrices)
-            self.__equalize_rows(ucm_coo_matrices)
-            URM = sparse.hstack(urm_coo_matrices, format='csr')
             ICM = sparse.hstack(icm_coo_matrices, format='csr')
-            UCM = sparse.hstack(ucm_coo_matrices, format='csr')
-            tmp = URM.nonzero()
-            self.__nonzero_urm_coordinates = tmp[0], tmp[1]
-            return URM, ICM, UCM
+            URM = sparse.hstack(urm_coo_matrices, format='csr')
+            return URM, ICM, None
 
         def get_non_zero_urm_coordinates(self):
             return self.__nonzero_urm_coordinates

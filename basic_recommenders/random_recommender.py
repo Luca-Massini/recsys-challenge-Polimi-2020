@@ -1,8 +1,8 @@
-from Recommender import Recommender
+from Recommender import trained_Recommender
 import numpy.random as random
 
 
-class random_recommender(Recommender):
+class random_recommender(trained_Recommender):
 
     def __init__(self):
         self.__umItems = 0

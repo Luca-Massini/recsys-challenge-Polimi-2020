@@ -2,15 +2,15 @@ import numpy as np
 import pandas as pd
 import os
 import csv
+from basic_recommenders.TopPopRecommender import TopPopRecommender
 
-from Recommender import Recommender
+from Recommender import trained_Recommender
 from utils.data_manager.data_manager import data_manager
 
 
 class submission_helper:
-    def __init__(self, name_of_the_file, recommender: Recommender, at=10):
+    def __init__(self, name_of_the_file, recommender: trained_Recommender, at=10):
         self.__recommender = recommender
-        self.__recommender.fit(training_set=data_manager().get_urm())
         dirname = os.path.dirname(__file__)
         filename = os.path.join(dirname, "../data/" + "data_target_users_test.csv")
         self.__users = pd.read_csv(filename).to_numpy().ravel()

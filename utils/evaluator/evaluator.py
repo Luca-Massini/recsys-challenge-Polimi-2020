@@ -1,13 +1,13 @@
 import numpy as np
 
-from Recommender import Recommender
+from Recommender import trained_Recommender
 from utils.data_manager.splitter import splitter
 from utils.evaluator.evaluator_component import evaluator_component
 
 
 class evaluator:
 
-    def __init__(self, recommender_object: Recommender):
+    def __init__(self, recommender_object: trained_Recommender):
         self.__recommender = recommender_object
 
     def repeated_hold_out(self, iterations=20, percentage_of_training_data=0.8, at=10):
@@ -31,6 +31,14 @@ class evaluator:
         self.__recommender.fit(training_set=train)
         precision, recall, map_ = evaluator_component(trained_recommender=self.__recommender,
                                                       testing_matrix=test).evaluate(at)
+        return precision, recall, map_
+
+    @staticmethod
+    def evaluate_already_trained(recommender: trained_Recommender, percentage_of_training_data=0.6, percentage_of_validation_data=0.2, at=10):
+        train, validation, test = splitter().get_train_evaluation_test(percentage_of_training_data=percentage_of_training_data,
+                                                                       percentage_of_validation_data=percentage_of_validation_data)
+        precision, recall, map_ = evaluator_component(trained_recommender=recommender,
+                                                      testing_matrix=validation).evaluate(at)
         return precision, recall, map_
 
     def compute_validation_score(self, validation_set, training_set, at=10):

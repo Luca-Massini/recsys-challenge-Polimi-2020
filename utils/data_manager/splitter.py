@@ -89,7 +89,7 @@ class splitter:
         percentage_of_training_data = percentage_of_training_data + percentage_of_validation_data
         urm_training, urm_testing = self.get_train_test(percentage_of_training_data)
         percentage_of_validation_data = percentage_of_validation_data / tmp
-        users, items = self.__data_importer.get_non_zero_urm_coordinates()
+        users, items = urm_training.nonzero()
         n_users, n_items = np.max(users) + 1, np.max(items) + 1
         couples = list(zip(users, items))
         couples = [list(elem) for elem in couples]

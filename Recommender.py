@@ -1,4 +1,4 @@
-class Recommender:
+class trained_Recommender:
 
     def fit(self, training_set):
         pass
