@@ -1,19 +1,21 @@
 import numpy as np
-from Recommender import trained_Recommender
+from Recommender import Recommender
 from utils.Similarity.Compute_Similarity_Python import Compute_Similarity_Python
 from utils.data_manager.data_manager import data_manager
-from utils.data_manager.splitter import splitter
 from utils.evaluator.evaluator import evaluator
 
 
-class cbf_recommender(trained_Recommender):
-    def __init__(self):
-        self.__training_set = None
-        self.__ICM = data_manager().get_icm()
+class cbf_recommender(Recommender):
+    def __init__(self, icm=None):
+        self.__urm_training = None
+        if icm is None:
+            self.__ICM = data_manager().get_icm()
+        else:
+            self.__ICM = icm
         self.__similarity_matrix = None
 
     def fit(self, training_set, k=100, shrink=100, normalize=True, similarity='cosine'):
-        self.__training_set = training_set
+        self.__urm_training = training_set
         similarity_object = Compute_Similarity_Python(self.__ICM.T, shrink=shrink,
                                                       topK=k, normalize=normalize,
                                                       similarity=similarity)
@@ -22,7 +24,7 @@ class cbf_recommender(trained_Recommender):
 
     def recommend(self, userId, at=10, exclude_seen=True):
         # compute the scores using the dot product
-        user_profile = self.__training_set[userId]
+        user_profile = self.__urm_training[userId]
         scores = user_profile.dot(self.__similarity_matrix).toarray().ravel()
 
         if exclude_seen:
@@ -34,10 +36,10 @@ class cbf_recommender(trained_Recommender):
         return ranking[:at]
 
     def __filter_seen(self, user_id, scores):
-        start_pos = self.__training_set.indptr[user_id]
-        end_pos = self.__training_set.indptr[user_id + 1]
+        start_pos = self.__urm_training.indptr[user_id]
+        end_pos = self.__urm_training.indptr[user_id + 1]
 
-        user_profile = self.__training_set.indices[start_pos:end_pos]
+        user_profile = self.__urm_training.indices[start_pos:end_pos]
 
         scores[user_profile] = -np.inf
 

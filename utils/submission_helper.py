@@ -4,12 +4,12 @@ import os
 import csv
 from basic_recommenders.TopPopRecommender import TopPopRecommender
 
-from Recommender import trained_Recommender
+from Recommender import Recommender
 from utils.data_manager.data_manager import data_manager
 
 
 class submission_helper:
-    def __init__(self, name_of_the_file, recommender: trained_Recommender, at=10):
+    def __init__(self, name_of_the_file, recommender: Recommender, at=10):
         self.__recommender = recommender
         dirname = os.path.dirname(__file__)
         filename = os.path.join(dirname, "../data/" + "data_target_users_test.csv")

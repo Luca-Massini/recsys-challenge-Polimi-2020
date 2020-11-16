@@ -1,8 +1,8 @@
 import numpy as np
-from Recommender import trained_Recommender
+from Recommender import Recommender
 
 
-class TopPopRecommender(trained_Recommender):
+class TopPopRecommender(Recommender):
 
     def __init__(self, threshold=0, is_implicit=True):
         assert((threshold == 0 and is_implicit) or (threshold != 0 and not is_implicit))
@@ -21,7 +21,7 @@ class TopPopRecommender(trained_Recommender):
         self.__popularItems = np.argsort(itemPopularity)
         self.__popularItems = np.flip(self.__popularItems, axis=0)
 
-    def recommend(self, userId, at=5):
+    def recommend(self, userId, at=10):
         unseen_items_mask = np.in1d(self.__popularItems, self.__URM_train[userId].indices,
                                     assume_unique=True, invert=True)
 
