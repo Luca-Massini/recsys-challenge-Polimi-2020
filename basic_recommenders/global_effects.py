@@ -35,7 +35,7 @@ class GlobalEffectsRecommender(Recommender):
         self.__bestRatedItems = np.argsort(item_mean_rating)
         self.__bestRatedItems = np.flip(self.__bestRatedItems, axis=0)
 
-    def recommend(self, user_id, at=5, remove_seen=True):
+    def recommend(self, user_id, at=10, remove_seen=True):
         if remove_seen:
             unseen_items_mask = np.in1d(self.__bestRatedItems, self.__URM_train[user_id].indices,
                                         assume_unique=True, invert=True)
