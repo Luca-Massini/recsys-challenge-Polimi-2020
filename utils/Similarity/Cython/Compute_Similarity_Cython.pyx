@@ -18,12 +18,10 @@ Determine the operative system. The interface of numpy returns a different type 
 
 http://docs.cython.org/en/latest/src/userguide/language_basics.html#conditional-compilation
 """
-IF UNAME_SYSNAME == "linux":
-    DEF LONG_t = "long"
-ELIF  UNAME_SYSNAME == "Windows":
-    DEF LONG_t = "long long"
-ELSE:
-    DEF LONG_t = "long long"
+
+
+DEF LONG_t = "long long"
+
 
 
 
@@ -40,7 +38,7 @@ from libc.math cimport sqrt
 
 
 import scipy.sparse as sps
-from Base.Recommender_utils import check_matrix
+from utils.Recommender_utils import check_matrix
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
