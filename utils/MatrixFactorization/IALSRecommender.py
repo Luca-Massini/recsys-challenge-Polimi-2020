@@ -6,9 +6,9 @@ Created on 23/03/2019
 
 
 
-from Base.BaseMatrixFactorizationRecommender import BaseMatrixFactorizationRecommender
-from Base.Incremental_Training_Early_Stopping import Incremental_Training_Early_Stopping
-from Base.Recommender_utils import check_matrix
+from utils.BaseMatrixFactorizationRecommender import BaseMatrixFactorizationRecommender
+from utils.Incremental_Training_Early_Stopping import Incremental_Training_Early_Stopping
+from utils.Recommender_utils import check_matrix
 import numpy as np
 
 
