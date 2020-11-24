@@ -32,3 +32,6 @@ class cf_recommender_item(Recommender):
         user_profile = self.__URM.indices[start_pos:end_pos]
         scores[user_profile] = -np.inf
         return scores
+
+    def get_similarity_matrix(self):
+        return self.__W_sparse

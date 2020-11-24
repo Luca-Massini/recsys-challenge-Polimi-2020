@@ -1,6 +1,9 @@
 from Recommender import Recommender
 from utils.SLIM_BPR.SLIM_BPR import SLIM_BPR
 import numpy as np
+import scipy.sparse as sparse
+
+from utils.data_manager.data_manager import data_manager
 
 
 class slim_bpr(Recommender):
@@ -8,10 +11,16 @@ class slim_bpr(Recommender):
         self.__training_set = None
         self.__learner = None
         self.__similarity = None
+        self.__icm = None
 
-    def fit(self, training_set, lambda_i=0.0025, lambda_j=0.00025, learning_rate=0.05, k=100, epochs=20):
+    def fit(self, training_set, lambda_i=0.0025, lambda_j=0.00025, learning_rate=0.05, k=100, epochs=20, concatenate_icm=False):
         self.__training_set = training_set
-        self.__learner = SLIM_BPR(URM_train=training_set, lambda_i=lambda_i,
+        if concatenate_icm:
+            self.__icm = data_manager().get_icm()
+            new_urm = sparse.vstack([self.__icm.T, self.__training_set], format='csr')
+        else:
+            new_urm = self.__training_set
+        self.__learner = SLIM_BPR(URM_train=new_urm, lambda_i=lambda_i,
                                   lambda_j=lambda_j, learning_rate=learning_rate)
         self.__similarity = self.__learner.fit(epochs=epochs, k=k)
 

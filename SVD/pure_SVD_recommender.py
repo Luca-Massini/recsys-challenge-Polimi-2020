@@ -1,6 +1,9 @@
 from Recommender import Recommender
 from utils.MatrixFactorization.PureSVDRecommender import PureSVDItemRecommender
 import numpy as np
+import scipy.sparse as sparse
+
+from utils.data_manager.data_manager import data_manager
 
 SEED = 1234
 
@@ -10,10 +13,15 @@ class pure_SVD_recommender(Recommender):
         self.__training_set = None
         self.__learner = None
         self.__similarity = None
+        self.__icm = data_manager().get_icm()
 
-    def fit(self, training_set, num_factors=40, k=100):
+    def fit(self, training_set, num_factors=40, k=100, concatenate_icm = False):
         self.__training_set = training_set
-        self.__learner = PureSVDItemRecommender(URM_train=self.__training_set.copy())
+        if concatenate_icm:
+            new_urm = sparse.vstack([self.__icm.T, self.__training_set])
+        else:
+            new_urm = self.__training_set
+        self.__learner = PureSVDItemRecommender(URM_train=new_urm.copy())
         self.__similarity = self.__learner.fit(num_factors=num_factors, topK=k, random_seed=SEED)
 
     def recommend(self, userId, at=10, exclude_seen=True):

@@ -45,8 +45,5 @@ class cbf_recommender(Recommender):
 
         return scores
 
-
-if __name__ == '__main__':
-    recommender = cbf_recommender()
-    map_ = evaluator(recommender_object=recommender).evaluate()
-    print(map_)
+    def get_similarity_matrix(self):
+        return self.__similarity_matrix
