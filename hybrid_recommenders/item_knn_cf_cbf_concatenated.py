@@ -53,3 +53,6 @@ class item_knn_cf_cbf(Recommender):
         scores[user_profile] = -np.inf
 
         return scores
+
+    def get_similarity_matrix(self):
+        return self.__similarity_matrix

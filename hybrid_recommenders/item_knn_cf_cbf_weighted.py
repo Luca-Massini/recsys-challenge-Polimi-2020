@@ -22,7 +22,9 @@ class item_knn_cf_cbf_weighted(Recommender):
         self.__cf.fit(training_set=self.__urm_training, k=k_cf, shrink=shrink_cf, similarity=self.__cf_similarity)
         self.__cbf.fit(training_set=self.__urm_training, k=k_cf, shrink=shrink_cf, similarity=self.__cbf_similarity)
         self.__cf_similarity = self.__cf.get_similarity_matrix()
+        self.__cf_similarity = self.__cf_similarity/self.__cf_similarity.max()
         self.__cbf_similarity = self.__cbf.get_similarity_matrix()
+        self.__cbf_similarity = self.__cbf_similarity / self.__cbf_similarity.max()
         self.__similarity_matrix = self.__weight_cf * self.__cf_similarity + self.__weight_cbf * self.__cbf_similarity
         if k_total is not None:
             self.__similarity_matrix = similarityMatrixTopK(self.__similarity_matrix.copy(), k=k_total)
