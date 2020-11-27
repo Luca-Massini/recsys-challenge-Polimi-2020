@@ -1,28 +1,21 @@
 from Recommender import Recommender
-from utils.SLIM_BPR.SLIM_BPR import SLIM_BPR
+from SLIM_ElasticNet.SLIMElasticNetRecommender import SLIMElasticNetRecommender
 import numpy as np
-import scipy.sparse as sparse
-
-from utils.data_manager.data_manager import data_manager
 
 
-class slim_bpr(Recommender):
+class slim_elastic_net(Recommender):
     def __init__(self):
         self.__training_set = None
         self.__learner = None
         self.__similarity = None
-        self.__icm = None
 
-    def fit(self, training_set, lambda_i=0.0025, lambda_j=0.00025, learning_rate=0.05, k=100, epochs=20, concatenate_icm=False):
+    def fit(self, training_set, l1_ratio=1e-5, alpha=1e-5, positive_only=True, k=100):
         self.__training_set = training_set
-        if concatenate_icm:
-            self.__icm = data_manager().get_icm()
-            new_urm = sparse.vstack([self.__icm.T, self.__training_set], format='csr')
-        else:
-            new_urm = self.__training_set
-        self.__learner = SLIM_BPR(URM_train=new_urm, lambda_i=lambda_i,
-                                  lambda_j=lambda_j, learning_rate=learning_rate)
-        self.__similarity = self.__learner.fit(epochs=epochs, k=k)
+        self.__learner = SLIMElasticNetRecommender(URM_train=self.__training_set)
+        self.__similarity = self.__learner.fit(l1_ratio=l1_ratio,
+                                               alpha=alpha,
+                                               positive_only=positive_only,
+                                               topK=k)
 
     def recommend(self, userId, at=10, exclude_seen=True):
         # compute the scores using the dot product

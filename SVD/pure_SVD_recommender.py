@@ -15,7 +15,7 @@ class pure_SVD_recommender(Recommender):
         self.__similarity = None
         self.__icm = data_manager().get_icm()
 
-    def fit(self, training_set, num_factors=40, k=100, concatenate_icm = False):
+    def fit(self, training_set, num_factors=40, k=100, concatenate_icm=False):
         self.__training_set = training_set
         if concatenate_icm:
             new_urm = sparse.vstack([self.__icm.T, self.__training_set])
@@ -39,3 +39,6 @@ class pure_SVD_recommender(Recommender):
         user_profile = self.__training_set.indices[start_pos:end_pos]
         scores[user_profile] = -np.inf
         return scores
+
+    def get_similarity_matrix(self):
+        return self.__similarity

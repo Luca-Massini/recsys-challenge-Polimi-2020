@@ -66,7 +66,7 @@ class SLIM_BPR(BaseRecommender):
         """
         Train SLIM wit BPR. If the model was already trained, overwrites matrix S
         :param k:
-        :param K:
+        :param k:
         :param epochs:
         :return: -
         """

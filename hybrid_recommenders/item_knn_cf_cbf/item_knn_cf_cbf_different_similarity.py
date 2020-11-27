@@ -1,6 +1,8 @@
 from Recommender import Recommender
-from hybrid_recommenders.item_knn_cf_cbf_concatenated import item_knn_cf_cbf
+#from hybrid_recommenders.item_knn_cf_cbf_concatenated import item_knn_cf_cbf
 import numpy as np
+
+from hybrid_recommenders.item_knn_cf_cbf.item_knn_cf_cbf_concatenated import item_knn_cf_cbf
 
 
 class item_knn_cf_cbf_different_similarity(Recommender):
