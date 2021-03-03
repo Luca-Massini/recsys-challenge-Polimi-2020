@@ -36,7 +36,7 @@ class SLIMElasticNetRecommender(BaseItemSimilarityMatrixRecommender):
         super(SLIMElasticNetRecommender, self).__init__(URM_train, verbose=verbose)
 
     @ignore_warnings(category=ConvergenceWarning)
-    def fit(self, l1_ratio=0.1, alpha=1.0, positive_only=True, topK=100):
+    def fit(self, l1_ratio=0.1, alpha=1e-07, positive_only=True, topK=100):
 
         assert 0 <= l1_ratio <= 1, "{}: l1_ratio must be between 0 and 1, provided value was {}".format(
             self.RECOMMENDER_NAME, l1_ratio)
@@ -140,7 +140,6 @@ class SLIMElasticNetRecommender(BaseItemSimilarityMatrixRecommender):
                 sys.stderr.flush()
 
                 start_time_printBatch = time.time()
-
         # generate the sparse weight matrix
         self.W_sparse = sps.csr_matrix((values[:numCells], (rows[:numCells], cols[:numCells])),
                                        shape=(n_items, n_items), dtype=np.float32)
@@ -155,9 +154,11 @@ class MultiThreadSLIM_ElasticNet(SLIMElasticNetRecommender, BaseItemSimilarityMa
 
     def __init__(self, URM_train, verbose=True):
         super(MultiThreadSLIM_ElasticNet, self).__init__(URM_train, verbose=verbose)
+        self.__l2_regularization = None
 
     def _partial_fit(self, currentItem, X, topK):
-        model = ElasticNet(alpha=1.0,
+        print(currentItem)
+        model = ElasticNet(alpha=self.__l2_regularization,
                            l1_ratio=self.l1_ratio,
                            positive=self.positive_only,
                            fit_intercept=False,
@@ -165,7 +166,7 @@ class MultiThreadSLIM_ElasticNet(SLIMElasticNetRecommender, BaseItemSimilarityMa
                            precompute=True,
                            selection='random',
                            max_iter=100,
-                           tol=1e-4)
+                           tol=1e-3)
 
         # WARNING: make a copy of X to avoid race conditions on column j
         # TODO: We can probably come up with something better here.
@@ -196,8 +197,11 @@ class MultiThreadSLIM_ElasticNet(SLIMElasticNetRecommender, BaseItemSimilarityMa
     def fit(self, l1_ratio=0.1,
             positive_only=True,
             topK=100,
-            workers=multiprocessing.cpu_count()):
-        assert l1_ratio >= 0 and l1_ratio <= 1, "SLIM_ElasticNet: l1_ratio must be between 0 and 1, provided value was {}".format(
+            workers=int(multiprocessing.cpu_count()/2),
+            l2_regularization=1.):
+        self.__l2_regularization = l2_regularization
+        print("multiprocess training started. Number of CPUs in use: ", workers)
+        assert 0 <= l1_ratio <= 1, "SLIM_ElasticNet: l1_ratio must be between 0 and 1, provided value was {}".format(
             l1_ratio)
 
         self.l1_ratio = l1_ratio
@@ -229,3 +233,4 @@ class MultiThreadSLIM_ElasticNet(SLIMElasticNetRecommender, BaseItemSimilarityMa
 
         # generate the sparse weight matrix
         self.W_sparse = sps.csr_matrix((values, (rows, cols)), shape=(n_items, n_items), dtype=np.float32)
+        return self.W_sparse

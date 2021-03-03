@@ -15,8 +15,12 @@ class item_knn_cf_cbf(Recommender):
             self.__ICM = icm
         self.__similarity_matrix = None
         self.__non_personalized_recommender = TopPopRecommender()
+        self.__n_users = None
+        self.__n_items = None
 
     def fit(self, training_set, k=100, shrink=100, normalize=True, similarity='cosine'):
+        self.__n_items = training_set.shape[1]
+        self.__n_users = training_set.shape[0]
         self.__urm_training = training_set
         self.__non_personalized_recommender.fit(training_set=training_set)
         if self.__ICM is not None:
@@ -56,3 +60,23 @@ class item_knn_cf_cbf(Recommender):
 
     def get_similarity_matrix(self):
         return self.__similarity_matrix
+
+    def get_scores(self, userId, filter_seen=True):
+        user_profile = self.__urm_training[userId]
+        scores = user_profile.dot(self.__similarity_matrix).toarray().ravel()
+        return scores
+
+    def compute_new_urm(self, ratings_per_user):
+        print("computing the new urm matrix")
+        rows = []
+        for user in range(0, self.__n_users):
+            if user+1 % 1000 == 0 and user != 0:
+                print(user)
+            recommended_items = self.recommend(user, at=ratings_per_user)
+            row = np.zeros(shape=(self.__n_items,))
+            for item in recommended_items:
+                row[item] = 1
+            rows.append(sparse.csr_matrix(sparse.coo_matrix(row)))
+        new_urm = sparse.vstack(rows, format='csr')
+        print("the new URM matrix is ready. Shape: ", new_urm.shape)
+        return new_urm

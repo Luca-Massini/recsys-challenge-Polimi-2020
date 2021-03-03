@@ -3,6 +3,7 @@ from Recommender import Recommender
 import numpy as np
 
 from hybrid_recommenders.item_knn_cf_cbf.item_knn_cf_cbf_concatenated import item_knn_cf_cbf
+from utils.Recommender_utils import similarityMatrixTopK
 
 
 class item_knn_cf_cbf_different_similarity(Recommender):
@@ -21,7 +22,7 @@ class item_knn_cf_cbf_different_similarity(Recommender):
         self.__weight1 = weight1
         self.__weight2 = weight2
 
-    def fit(self, training_set, k1=100, k2=100, shrink1=20, shrink2=20):
+    def fit(self, training_set, k1=100, k2=100, shrink1=20, shrink2=20, k_total=None):
         self.__urm_training = training_set
         self.__learner_1 = item_knn_cf_cbf()
         self.__learner_2 = item_knn_cf_cbf()
@@ -42,9 +43,10 @@ class item_knn_cf_cbf_different_similarity(Recommender):
         self.__similarity_m_2 = self.__similarity_m_2 / self.__similarity_m_2.max()
 
         self.__similarity = self.__weight1 * self.__similarity_m_1 + self.__weight2 * self.__similarity_m_2
+        if k_total is not None:
+            self.__similarity = similarityMatrixTopK(self.__similarity, k=k_total)
 
     def recommend(self, userId, at=10):
-        # compute the scores using the dot product
         user_profile = self.__urm_training[userId]
         scores = user_profile.dot(self.__similarity).toarray().ravel()
         scores = self.__filter_seen(userId, scores)

@@ -21,7 +21,7 @@ class P3alphaRecommender(BaseItemSimilarityMatrixRecommender):
 
     RECOMMENDER_NAME = "P3alphaRecommender"
 
-    def __init__(self, URM_train, verbose = True):
+    def __init__(self, URM_train, verbose=True):
         super(P3alphaRecommender, self).__init__(URM_train, verbose = verbose)
 
 

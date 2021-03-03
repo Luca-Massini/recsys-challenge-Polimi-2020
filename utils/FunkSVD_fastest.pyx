@@ -13,7 +13,7 @@ import cython
 @cython.nonecheck(False)
 @cython.cdivision(True)
 @cython.overflowcheck(False)
-def train_multiple_epochs(URM_train, learning_rate_input, n_epochs):
+def train_multiple_epochs(URM_train, n_epochs, num_factors=20,learning_rate=1e-4, regularization=1+-5):
 
     URM_train_coo = URM_train.tocoo()
     n_users, n_items = URM_train_coo.shape
@@ -22,9 +22,8 @@ def train_multiple_epochs(URM_train, learning_rate_input, n_epochs):
     cdef int sample_num, sample_index, user_id, item_id, factor_index
     cdef double rating, predicted_rating, prediction_error
 
-    cdef int num_factors = 10
-    cdef double learning_rate = 1e-4
-    cdef double regularization = 1e-5
+    #cdef double learning_rate = 1e-4
+    #cdef double regularization = 1e-5
 
     cdef int[:] URM_train_coo_row = URM_train_coo.row
     cdef int[:] URM_train_coo_col = URM_train_coo.col
